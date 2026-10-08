@@ -29,6 +29,8 @@ jobs:
           curl -L --fail -o /tmp/ff.zip https://elm-chan.org/fsw/ff/arc/ff15.zip
           unzip -o /tmp/ff.zip -d /tmp/ff
           cp /tmp/ff/source/*.c /tmp/ff/source/*.h lib/fatfs/
+          # 用仓库里定制的 ffconf.h 覆盖官方默认版
+          cp fatfs_conf/ffconf.h lib/fatfs/ffconf.h
 
       - name: Build
         env:
