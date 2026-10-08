@@ -1,0 +1,44 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
+
+      - name: Fetch pico-sdk
+        run: |
+          git clone --depth 1 --branch 2.1.1 https://github.com/raspberrypi/pico-sdk.git $GITHUB_WORKSPACE/pico-sdk
+          cd $GITHUB_WORKSPACE/pico-sdk
+          git submodule update --init lib/tinyusb
+
+      - name: Fetch FatFs
+        run: |
+          mkdir -p lib/fatfs /tmp/ff
+          curl -L --fail -o /tmp/ff.zip https://elm-chan.org/fsw/ff/arc/ff15.zip
+          unzip -o /tmp/ff.zip -d /tmp/ff
+          cp /tmp/ff/source/*.c /tmp/ff/source/*.h lib/fatfs/
+
+      - name: Build
+        env:
+          PICO_SDK_PATH: ${{ github.workspace }}/pico-sdk
+        run: |
+          cmake -B build -S .
+          cmake --build build -j$(nproc)
+
+      - name: Upload UF2
+        uses: actions/upload-artifact@v4
+        with:
+          name: stm8prog-uf2
+          path: build/stm8prog.uf2
