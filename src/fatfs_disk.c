@@ -29,3 +29,6 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff) {
     }
     return RES_PARERR;
 }
+DWORD get_fattime(void) {
+    return 0;   /* 时间未知, FatFs 接受 */
+}
