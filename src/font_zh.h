@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <stddef.h>
 
 /* 16x16 中文点阵字库 (菜单用到的汉字)
  * 格式: 每字 16 行, 每行 16 个字符, '#' = 点亮, '.' = 灭
