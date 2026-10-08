@@ -45,7 +45,7 @@ int files_scan(fileent_t *out, int maxn) {
     if (f_opendir(&dir, "/") != FR_OK) return 0;
     while (n < maxn && f_readdir(&dir, &fi) == FR_OK && fi.fname[0]) {
         if (fi.fattrib & (AM_DIR | AM_HID | AM_SYS)) continue;   /* 跳过系统垃圾 */
-        const char *name = fi.fname[0] ? fi.fname : fi.altname;
+        const char *name = fi.fname;
         bool is_bin;
         if (!has_fw_ext(name, &is_bin)) continue;
         snprintf(out[n].name, FILE_NAME_MAX, "%s", name);
