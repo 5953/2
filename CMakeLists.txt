@@ -9,9 +9,6 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 # ---- FatFs (第三方源码, 不随仓库分发) ----
-# 本地构建: 下载 https://elm-chan.org/fsw/ff/arc/ff15.zip
-#           把压缩包里 source/ 下的 *.c *.h 复制到 lib/fatfs/
-# GitHub Actions 会自动完成这一步.
 file(GLOB FATFS_SOURCES CONFIGURE_DEPENDS
      ${CMAKE_CURRENT_LIST_DIR}/lib/fatfs/source/*.c
      ${CMAKE_CURRENT_LIST_DIR}/lib/fatfs/*.c)
@@ -19,6 +16,9 @@ if (NOT FATFS_SOURCES)
     message(FATAL_ERROR
         "未找到 FatFs 源码! 请下载 ff15.zip 并把 source/ 里的文件复制到 lib/fatfs/")
 endif()
+
+# 剔除 FatFs 自带的 diskio.c, 避免 disk_* 重复定义
+list(FILTER FATFS_SOURCES EXCLUDE REGEX "/diskio\\.c$")
 
 add_executable(stm8prog
     src/main.c
